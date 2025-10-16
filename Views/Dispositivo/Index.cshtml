@@ -7,6 +7,40 @@
     var movimientos = ViewBag.Movimientos as IEnumerable<inventario_coprotab.Models.DBInventario.Movimiento>;
 }
 
+<!-- Agregar estilos CSS para el scroll -->
+<style>
+    .table-scroll-container {
+        max-height: 500px;
+        overflow-y: auto;
+        position: relative;
+    }
+
+        .table-scroll-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .table-scroll-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .table-scroll-container::-webkit-scrollbar-thumb {
+            background: var(--secondary-color);
+            border-radius: 10px;
+        }
+
+            .table-scroll-container::-webkit-scrollbar-thumb:hover {
+                background: var(--primary-color);
+            }
+
+        .table-scroll-container thead th {
+            position: sticky;
+            top: 0;
+            background: var(--primary-color);
+            z-index: 10;
+        }
+</style>
+
 <div class="page-header d-flex justify-content-between align-items-center">
     <h1><i class="bi bi-laptop"></i> Gestión de Inventario</h1>
     <div class="d-flex gap-2">
@@ -59,7 +93,7 @@
     </form>
 </div>
 
-<!-- ============================= SECCIÓN DISPOSITIVOS ============================= -->
+<!-- ============================= SECCIÓN DISPOSITIVOS CON SCROLL ============================= -->
 <div class="card-custom p-4 mb-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h3 class="mb-0" style="color: var(--primary-color);">
@@ -68,8 +102,8 @@
         <span class="badge bg-primary" style="font-size: 1rem;">@Model.Count() registros</span>
     </div>
 
-    <div class="table-responsive">
-        <table class="table table-custom table-hover">
+    <div class="table-scroll-container">
+        <table class="table table-custom table-hover mb-0">
             <thead>
                 <tr>
                     <th><i class="bi bi-tag"></i> Nombre</th>
@@ -144,13 +178,13 @@
 
     @if (!Model.Any())
     {
-        <div class="alert alert-info text-center">
+        <div class="alert alert-info text-center mt-3">
             <i class="bi bi-info-circle"></i> No se encontraron dispositivos con los criterios de búsqueda especificados.
         </div>
     }
 </div>
 
-<!-- ============================= SECCIÓN COMPONENTES ============================= -->
+<!-- ============================= SECCIÓN COMPONENTES CON BOTÓN MOVIMIENTO ============================= -->
 <div class="card-custom p-4 mb-4" style="border-left: 4px solid var(--success-color);">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h3 class="mb-0" style="color: var(--success-color);">
@@ -159,8 +193,8 @@
         <span class="badge bg-success" style="font-size: 1rem;">@(componentes?.Count() ?? 0) registros</span>
     </div>
 
-    <div class="table-responsive">
-        <table class="table table-custom table-hover">
+    <div class="table-scroll-container">
+        <table class="table table-custom table-hover mb-0">
             <thead style="background: var(--success-color);">
                 <tr>
                     <th><i class="bi bi-tag"></i> Nombre</th>
@@ -226,6 +260,9 @@
                                     <button class="btn btn-sm btn-warning-custom" onclick="abrirModalEditarComponente(@comp.IdComponente)" title="Editar">
                                         <i class="bi bi-pencil"></i>
                                     </button>
+                                    <button class="btn btn-sm btn-info" onclick="abrirModalMovimientoComponente(@comp.IdComponente)" title="Crear Movimiento">
+                                        <i class="bi bi-arrow-left-right"></i>
+                                    </button>
                                     <button class="btn btn-sm btn-danger-custom" onclick="abrirModalEliminarComponente(@comp.IdComponente, '@comp.Nombre')" title="Eliminar">
                                         <i class="bi bi-trash"></i>
                                     </button>
@@ -240,12 +277,11 @@
 
     @if (componentes == null || !componentes.Any())
     {
-        <div class="alert alert-info text-center">
+        <div class="alert alert-info text-center mt-3">
             <i class="bi bi-info-circle"></i> No se encontraron componentes con los criterios de búsqueda especificados.
         </div>
     }
 </div>
-
 <!-- Sección de Movimientos -->
 <div class="card-custom p-4 mb-4" style="border-left: 4px solid var(--success-color);">
     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -748,5 +784,15 @@
         $('#createEquipoModal').on('hidden.bs.modal', function () {
             $(this).find('.modal-body').empty();
         });
+        // ✅ NUEVA FUNCIÓN: Abrir modal de movimiento para componentes
+        function abrirModalMovimientoComponente(idComponente) {
+            $('#modalMovimientoTitulo').html('<i class="bi bi-arrow-left-right"></i> Nuevo Movimiento de Componente');
+            $.get('@Url.Action("CreateForComponente", "Movimiento")/' + idComponente, function(data) {
+                $('#modalMovimientoContenido').html(data);
+                $('#modalMovimiento').modal('show');
+            }).fail(function() {
+                alert('Error al cargar el formulario de Movimiento');
+            });
+        }
     </script>
 }

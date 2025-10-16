@@ -47,7 +47,7 @@ public partial class SistemaInventarioContext : DbContext
             entity.HasKey(e => e.IdComponente).HasName("PK__componen__B5F34A8AFEA2C121");
 
             entity.ToTable("componentes");
-            
+
             entity.HasIndex(e => e.NroSerie, "UQ__componen__AD64A161BC78FB82").IsUnique();
 
             entity.Property(e => e.IdComponente).HasColumnName("id_componente");
@@ -173,6 +173,7 @@ public partial class SistemaInventarioContext : DbContext
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
                 .HasColumnName("fecha");
+            entity.Property(e => e.IdComponente).HasColumnName("id_componente");
             entity.Property(e => e.IdDispositivo).HasColumnName("id_dispositivo");
             entity.Property(e => e.IdResponsable).HasColumnName("id_responsable");
             entity.Property(e => e.IdUbicacion).HasColumnName("id_ubicacion");
@@ -183,6 +184,10 @@ public partial class SistemaInventarioContext : DbContext
                 .HasMaxLength(20)
                 .IsUnicode(false)
                 .HasColumnName("tipo_movimiento");
+
+            entity.HasOne(d => d.IdComponenteNavigation).WithMany(p => p.Movimientos)
+                .HasForeignKey(d => d.IdComponente)
+                .HasConstraintName("FK_Movimientos_Componentes");
 
             entity.HasOne(d => d.IdDispositivoNavigation).WithMany(p => p.Movimientos)
                 .HasForeignKey(d => d.IdDispositivo)

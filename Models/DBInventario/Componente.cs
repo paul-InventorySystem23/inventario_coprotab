@@ -29,6 +29,8 @@ public partial class Componente
 
     public virtual TipoHardware? IdTipoNavigation { get; set; }
 
+    public virtual ICollection<Movimiento> Movimientos { get; set; } = new List<Movimiento>();
+
     public virtual ICollection<RelacionDispositivoComponente> RelacionDispositivoComponentes { get; set; } = new List<RelacionDispositivoComponente>();
 
     public virtual ICollection<ReparacionDetalle> ReparacionDetalles { get; set; } = new List<ReparacionDetalle>();

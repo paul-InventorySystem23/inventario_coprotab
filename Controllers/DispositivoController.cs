@@ -48,6 +48,8 @@ namespace inventario_coprotab.Controllers
         }
 
         // GET: Dispositivo
+        // Reemplazar el método Index en DispositivoController.cs
+
         public async Task<IActionResult> Index(string searchCode, string searchSerie, string searchTipo, string searchEstado)
         {
             // DISPOSITIVOS (Hardware y Consumible)
@@ -68,11 +70,27 @@ namespace inventario_coprotab.Controllers
             if (!string.IsNullOrEmpty(searchEstado))
                 queryDispositivos = queryDispositivos.Where(d => d.Estado == searchEstado);
 
-            // ✅ Ordenar por fecha de alta descendente (más recientes primero) y tomar solo 5
-            var dispositivos = await queryDispositivos
-                .OrderByDescending(d => d.FechaAlta)
-                .Take(5)
-                .ToListAsync();
+            // ✅ Ordenar por fecha de alta descendente (más recientes primero)
+            // Si hay filtros, mostrar todos los resultados; si no, limitar a 5
+            List<Dispositivo> dispositivos;
+            bool hayFiltros = !string.IsNullOrEmpty(searchCode) ||
+                              !string.IsNullOrEmpty(searchSerie) ||
+                              !string.IsNullOrEmpty(searchTipo) ||
+                              !string.IsNullOrEmpty(searchEstado);
+
+            if (hayFiltros)
+            {
+                dispositivos = await queryDispositivos
+                    .OrderByDescending(d => d.FechaAlta)
+                    .ToListAsync();
+            }
+            else
+            {
+                dispositivos = await queryDispositivos
+                    .OrderByDescending(d => d.FechaAlta)
+                    .Take(5)
+                    .ToListAsync();
+            }
 
             // COMPONENTES
             var queryComponentes = _context.Componentes
@@ -90,12 +108,23 @@ namespace inventario_coprotab.Controllers
             if (!string.IsNullOrEmpty(searchEstado))
                 queryComponentes = queryComponentes.Where(c => c.Estado == searchEstado);
 
-            // ✅ Ordenar por fecha de instalación descendente y tomar solo 5
-            var componentes = await queryComponentes
-                .OrderByDescending(c => c.FechaInstalacion)
-                .Take(5)
-                .ToListAsync();
+            // ✅ Ordenar por fecha de instalación descendente
+            List<Componente> componentes;
+            if (hayFiltros)
+            {
+                componentes = await queryComponentes
+                    .OrderByDescending(c => c.FechaInstalacion)
+                    .ToListAsync();
+            }
+            else
+            {
+                componentes = await queryComponentes
+                    .OrderByDescending(c => c.FechaInstalacion)
+                    .Take(5)
+                    .ToListAsync();
+            }
 
+            // MOVIMIENTOS
             var queryMovimientos = _context.Movimientos
                 .Include(c => c.IdDispositivoNavigation)
                 .Include(c => c.IdUbicacionNavigation)
@@ -114,7 +143,6 @@ namespace inventario_coprotab.Controllers
             ViewBag.SearchSerie = searchSerie;
             ViewBag.SearchTipo = searchTipo;
             ViewBag.SearchEstado = searchEstado;
-
 
             return View(dispositivos);
         }
