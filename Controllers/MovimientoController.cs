@@ -39,19 +39,20 @@ namespace inventario_coprotab.Controllers
             return PartialView("_DetailsPartial", movimiento);
         }
 
-        // GET: Componente/Create
+        // GET: Movimiento/Create
         public IActionResult Create()
         {
             ViewData["IdDispositivo"] = new SelectList(_context.Dispositivos.OrderBy(m => m.Nombre), "IdDispositivo", "Nombre");
             ViewData["IdResponsable"] = new SelectList(_context.Responsables.OrderBy(m => m.Nombre), "IdResponsable", "Nombre");
             ViewData["IdUbicacion"] = new SelectList(_context.Ubicaciones.OrderBy(m => m.Nombre), "IdUbicacion", "Nombre");
-           
+            ViewBag.TipoDisponibles = new List<string> { "Entrada", "Salida", "Traslado" };
+
 
             var viewModel = new MovimientoViewModel();
             return PartialView("_CreatePartial", viewModel);
         }
 
-        // POST: Componente/CreateModal
+        // POST: Movimiento/CreateModal
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateModal(MovimientoViewModel model)
@@ -61,7 +62,7 @@ namespace inventario_coprotab.Controllers
                 var movimiento = new Movimiento
                 {
                     IdDispositivo = model.IdDispositivo,
-                    TipoMovimiento = model.TipoMovimiento,
+                    TipoMovimiento = model.TipoMovimiento ?? throw new ArgumentNullException(nameof(model.TipoMovimiento)),
                     Cantidad = model.Cantidad,
                     IdUbicacion = model.IdUbicacion,
                     IdResponsable= model.IdResponsable,
@@ -78,7 +79,8 @@ namespace inventario_coprotab.Controllers
             ViewData["IdDispositivo"] = new SelectList(_context.Dispositivos.OrderBy(m => m.Nombre), "IdDispositivo", "Nombre");
             ViewData["IdResponsable"] = new SelectList(_context.Responsables.OrderBy(m => m.Nombre), "IdResponsable", "Nombre");
             ViewData["IdUbicacion"] = new SelectList(_context.Ubicaciones.OrderBy(m => m.Nombre), "IdUbicacion", "Nombre");
-            
+            ViewBag.TipoDisponibles = new List<string> { "Entrada", "Salida", "Traslado" };
+
 
 
             return PartialView("_CreatePartial", model);
@@ -126,7 +128,8 @@ namespace inventario_coprotab.Controllers
             ViewData["IdDispositivo"] = new SelectList(_context.Dispositivos.OrderBy(m => m.Nombre), "IdDispositivo", "Nombre");
             ViewData["IdResponsable"] = new SelectList(_context.Responsables.OrderBy(m => m.Nombre), "IdResponsable", "Nombre");
             ViewData["IdUbicacion"] = new SelectList(_context.Ubicaciones.OrderBy(m => m.Nombre), "IdUbicacion", "Nombre");
-            
+            ViewBag.TipoDisponibles = new List<string> { "Entrada", "Salida", "Traslado" };
+
 
             return PartialView("_EditPartial", model);
         }
@@ -150,7 +153,8 @@ namespace inventario_coprotab.Controllers
                 ViewData["IdDispositivo"] = new SelectList(_context.Dispositivos.OrderBy(m => m.Nombre), "IdDispositivo", "Nombre");
                 ViewData["IdResponsable"] = new SelectList(_context.Responsables.OrderBy(m => m.Nombre), "IdResponsable", "Nombre");
                 ViewData["IdUbicacion"] = new SelectList(_context.Ubicaciones.OrderBy(m => m.Nombre), "IdUbicacion", "Nombre");
-               
+                ViewBag.TipoDisponibles = new List<string> { "Entrada", "Salida", "Traslado" };
+
 
                 return PartialView("_EditPartial", model);
             }
@@ -163,7 +167,7 @@ namespace inventario_coprotab.Controllers
 
             // Actualizar campos
             movimiento.IdDispositivo = model.IdDispositivo;
-            movimiento.TipoMovimiento = model.TipoMovimiento;
+            movimiento.TipoMovimiento = model.TipoMovimiento ?? throw new ArgumentNullException(nameof(model.TipoMovimiento));
             movimiento.Cantidad = model.Cantidad;
             movimiento.IdUbicacion = model.IdUbicacion;
             movimiento.IdResponsable = model.IdResponsable;
@@ -184,7 +188,8 @@ namespace inventario_coprotab.Controllers
                 ViewData["IdDispositivo"] = new SelectList(_context.Dispositivos.OrderBy(m => m.Nombre), "IdDispositivo", "Nombre");
                 ViewData["IdResponsable"] = new SelectList(_context.Responsables.OrderBy(m => m.Nombre), "IdResponsable", "Nombre");
                 ViewData["IdUbicacion"] = new SelectList(_context.Ubicaciones.OrderBy(m => m.Nombre), "IdUbicacion", "Nombre");
-                
+                ViewBag.TipoDisponibles = new List<string> { "Entrada", "Salida", "Traslado" };
+
 
                 ModelState.AddModelError("", "Ocurrió un error al guardar los cambios.");
                 return PartialView("_EditPartial", model);
@@ -199,12 +204,15 @@ namespace inventario_coprotab.Controllers
             var movimiento = await _context.Movimientos.FindAsync(id);
             if (movimiento != null)
             {
+                _context.Movimientos.Remove(movimiento);
                 await _context.SaveChangesAsync();
                 return Json(new { success = true });
             }
             return Json(new { success = false });
         }
 
+        
+        
         // GET: Movimiento/Create
         //public IActionResult Create()
         //{

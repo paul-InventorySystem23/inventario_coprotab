@@ -277,27 +277,50 @@
             <tbody>
                 @if (movimientos != null && movimientos.Any())
                 {
-                    @foreach (var comp in movimientos)
+                    @foreach (var movi in movimientos)
                     {
                         <tr>
-                            <td class="fw-bold">@comp.IdDispositivoNavigation</td>
-                            <td>@(comp.TipoMovimiento)</td>
-                            <td>@(comp.Cantidad)</td>
-                            <td>@(comp.IdUbicacionNavigation.Nombre)</td>
-                            <td>@(comp.IdResponsableNavigation.Nombre)</td>
-                            <td>@(comp.Observaciones)</td>
-                            <td>@(comp.Fecha.ToString("dd/MM/yyyy") ?? "N/A")</td>
+                            <td class="fw-bold">@movi.IdDispositivoNavigation.Nombre</td>
+                            <td>
+                                @if (movi.TipoMovimiento == "Entrada")
+                                {
+                                    <span class="badge badge-custom" style="background-color: var(--success-color);">
+                                        <i class="bi bi-star-fill"></i> @movi.TipoMovimiento
+                                    </span>
+                                }
+                                else if (movi.TipoMovimiento == "Salida")
+                                {
+                                    <span class="badge badge-custom" style="background-color: var(--secondary-color);">
+                                        <i class="bi bi-check-circle-fill"></i> @movi.TipoMovimiento
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-custom" style="background-color: var(--warning-color);">
+                                        <i class="bi bi-exclamation-circle-fill"></i> @(movi.TipoMovimiento ?? "N/A")
+                                    </span>
+                                }
+                            </td>
+                            @* <td>@(movi.TipoMovimiento)</td> *@
+                            <td>@(movi.Cantidad)</td>
+                            <td>@(movi.IdUbicacionNavigation?.Nombre)</td>
+                            <td>@(movi.IdResponsableNavigation?.Nombre)</td>
+                            <td>@(movi.Observaciones)</td>
+                            <td>@(movi.Fecha.ToString("dd/MM/yyyy") ?? "N/A")</td>
                             <td class="text-center">
                                 <div class="btn-group" role="group">
-                                    <button class="btn btn-sm btn-outline-primary" onclick="abrirModalDetalleMovimiento(@comp.IdMovimiento)" title="Ver Detalles">
+                                    <button class="btn btn-sm btn-outline-primary" onclick="abrirModalDetalleMovimiento(@movi.IdMovimiento)" title="Ver Detalles">
                                         <i class="bi bi-eye"></i>
                                     </button>
-                                    <button class="btn btn-sm btn-warning-custom" onclick="abrirModalEditarMovimiento(@comp.IdMovimiento)" title="Editar">
+                                    <button class="btn btn-sm btn-warning-custom" onclick="abrirModalEditarMovimiento(@movi.IdMovimiento)" title="Editar">
                                         <i class="bi bi-pencil"></i>
                                     </button>
-                                    <button class="btn btn-sm btn-danger-custom" onclick="abrirModalEliminarMovimiento(@comp.IdMovimiento)" title="Eliminar">
+                                    <button class="btn btn-sm btn-danger-custom" onclick="abrirModalEliminarMovimiento(@movi.IdMovimiento, '@movi.IdDispositivoNavigation.Nombre')" title="Eliminar">
                                         <i class="bi bi-trash"></i>
                                     </button>
+                                    @* <button class="btn btn-success-custom" onclick="abrirModalMovimiento()">
+                                        <i class="bi bi-gear"></i> Nuevo Movimiento
+                                    </button> *@
                                 </div>
                             </td>
                         </tr>
@@ -399,7 +422,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header" style="background: var(--success-color); color: white;">
-                <h5 class="modal-title" id="modalComponenteTitulo"></h5>
+                <h5 class="modal-title" id="modalMovimientoTitulo"></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: brightness(0) invert(1);"></button>
             </div>
             <div class="modal-body" id="modalMovimientoContenido"></div>
@@ -411,6 +434,7 @@
     <script>
         let dispositivoIdEliminar = null;
         let componenteIdEliminar = null;
+        let movimientoIdEliminar = null;
 
         // ==================== FUNCIONES DISPOSITIVOS ====================
         function abrirModalCrear() {
@@ -619,6 +643,8 @@
             });
         });
 
+        //Movimientos
+
         function abrirModalMovimiento() {
             $('#modalMovimientoTitulo').html('<i class="bi bi-plus-circle"></i> Nuevo Movimiento');
             $.get('@Url.Action("Create", "Movimiento")', function(data) {
@@ -649,7 +675,7 @@
             });
         }
 
-        function abrirModalEliminarMovimeinto(id) {
+        function abrirModalEliminarMovimiento(id) {
             if (confirm('¿Está seguro que desea eliminar este Movimiento?')) {
                 $.ajax({
                     url: '@Url.Action("Delete", "Movimiento")/' + id,
@@ -671,7 +697,7 @@
             }
         }
 
-        // Manejar submit del formulario de componentes (crear)
+        // Manejar submit del formulario de Movimiento (crear)
         $(document).on('submit', '#formMovimiento', function(e) {
             e.preventDefault();
             var form = $(this);
@@ -693,7 +719,7 @@
             });
         });
 
-        // Manejar submit del formulario de edición de componentes
+        // Manejar submit del formulario de edición de Movimiento
         $(document).on('submit', '#formMovimientoEdit', function(e) {
             e.preventDefault();
             var form = $(this);

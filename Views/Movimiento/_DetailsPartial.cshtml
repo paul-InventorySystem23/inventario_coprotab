@@ -1,1 +1,218 @@
-﻿
+﻿@model inventario_coprotab.Models.DBInventario.Movimiento
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Información Principal -->
+        <div class="col-md-6">
+            <div class="card-custom p-3 mb-3">
+                <h6 class="fw-bold mb-3" style="color: var(--success-color);">
+                    <i class="bi bi-info-circle"></i> Información Principal
+                </h6>
+                <table class="table table-sm table-borderless">
+                    <tr>
+                        <td class="fw-bold text-muted" style="width: 40%;">
+                            <i class="bi bi-tag"></i> Nombre del Dispositivo:
+                        </td>
+                        <td>@Model.IdDispositivoNavigation.Nombre</td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold text-muted">
+                            <i class="bi bi-bookmark"></i> Tipo de Movimiento:
+                        </td>
+                        <td>
+                            @if (Model.TipoMovimiento == "Entrada")
+                            {
+                                <span class="badge badge-custom" style="background-color: var(--success-color);">
+                                    <i class="bi bi-star-fill"></i> @Model.TipoMovimiento
+                                </span>
+                            }
+                            else if (Model.TipoMovimiento == "Salida")
+                            {
+                                <span class="badge badge-custom" style="background-color: var(--secondary-color);">
+                                    <i class="bi bi-check-circle-fill"></i> @Model.TipoMovimiento
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-custom" style="background-color: var(--warning-color);">
+                                    <i class="bi bi-exclamation-circle-fill"></i> @Model.TipoMovimiento
+                                </span>
+                            }
+                        </td>
+                        @* <td>
+                            <span class="badge" style="background-color: var(--success-color);">
+                                @(Model.TipoMovimiento)
+                            </span>
+                        </td> *@
+                    </tr>
+                    <tr>
+                        <td class="fw-bold text-muted">
+                            <i class="bi bi-cpu"></i> Responsable:
+                        </td>
+                        <td>
+                            <span class="badge" style="background-color: var(--secondary-color);">
+                                @(Model.IdResponsableNavigation?.Nombre)
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold text-muted">
+                            <i class="bi bi-cpu"></i> Ubicacion:
+                        </td>
+                        <td>
+                            <span class="badge" style="background-color: var(--secondary-color);">
+                                @(Model.IdUbicacionNavigation?.Nombre)
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold text-muted">
+                            <i class="bi bi-box-seam"></i> Cantidad:
+                        </td>
+                        <td>
+                            <span class="badge bg-info" style="font-size: 1rem;">
+                                @Model.Cantidad unidades
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold text-muted">
+                            <i class="bi bi-cpu"></i> Observaciones:
+                        </td>
+                        <td>
+                            <span class="badge" style="background-color: var(--secondary-color);">
+                                @(Model.Observaciones)
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="fw-bold text-muted">
+                            <i class="bi bi-cpu"></i> Fecha:
+                        </td>
+                        <td>
+                            <span class="badge" style="background-color: var(--secondary-color);">
+                                @(Model.Fecha)
+                            </span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+           @*  <!-- Descripción -->
+            @if (!string.IsNullOrEmpty(Model.Descripcion))
+            {
+                <div class="card-custom p-3 mb-3">
+                    <h6 class="fw-bold mb-2" style="color: var(--success-color);">
+                        <i class="bi bi-card-text"></i> Descripción
+                    </h6>
+                    <p class="mb-0 text-muted">@Model.Descripcion</p>
+                </div>
+            }
+        </div>
+
+        <!-- Identificación y Fechas -->
+        <div class="col-md-6">
+            <div class="card-custom p-3 mb-3">
+                <h6 class="fw-bold mb-3" style="color: var(--success-color);">
+                    <i class="bi bi-upc-scan"></i> Identificación
+                </h6>
+                <table class="table table-sm table-borderless">
+                    <tr>
+                        <td class="fw-bold text-muted" style="width: 50%;">
+                            <i class="bi bi-hash"></i> Número de Serie:
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(Model.NroSerie))
+                            {
+                                <code>@Model.NroSerie</code>
+                            }
+                            else
+                            {
+                                <span class="text-muted">No asignado</span>
+                            }
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- Fecha de Instalación -->
+            <div class="card-custom p-3 mb-3">
+                <h6 class="fw-bold mb-3" style="color: var(--success-color);">
+                    <i class="bi bi-calendar-event"></i> Información Temporal
+                </h6>
+                <div class="d-flex align-items-center">
+                    <div class="rounded-circle p-2 me-3" style="background-color: rgba(39,174,96,0.1);">
+                        <i class="bi bi-calendar-check" style="color: var(--success-color); font-size: 1.5rem;"></i>
+                    </div>
+                    <div>
+                        <small class="text-muted">Fecha de Instalación</small>
+                        <p class="mb-0 fw-bold">
+                            @if (Model.FechaInstalacion.HasValue)
+                            {
+                                @Model.FechaInstalacion.Value.ToString("dd/MM/yyyy HH:mm")
+                            }
+                            else
+                            {
+                                <span class="text-muted">No registrada</span>
+                            }
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estado del Registro -->
+            <div class="card-custom p-3">
+                <h6 class="fw-bold mb-3" style="color: var(--success-color);">
+                    <i class="bi bi-check-circle"></i> Estado del Registro
+                </h6>
+                <div class="text-center">
+                    @if (Model.EstadoRegistro)
+                    {
+                        <div class="p-3 rounded" style="background-color: rgba(39,174,96,0.1);">
+                            <i class="bi bi-check-circle-fill" style="font-size: 3rem; color: var(--success-color);"></i>
+                            <h5 class="mt-2 mb-0 fw-bold" style="color: var(--success-color);">ACTIVO</h5>
+                            <small class="text-muted">El componente está disponible</small>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="p-3 rounded" style="background-color: rgba(231,76,60,0.1);">
+                            <i class="bi bi-x-circle-fill" style="font-size: 3rem; color: var(--accent-color);"></i>
+                            <h5 class="mt-2 mb-0 fw-bold" style="color: var(--accent-color);">INACTIVO</h5>
+                            <small class="text-muted">El componente fue dado de baja</small>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Relaciones con Dispositivos -->
+    @if (Model.RelacionDispositivoComponentes != null && Model.RelacionDispositivoComponentes.Any())
+    {
+        <div class="row mt-3">
+            <div class="col-12">
+                <div class="card-custom p-3">
+                    <h6 class="fw-bold mb-3" style="color: var(--success-color);">
+                        <i class="bi bi-link-45deg"></i> Equipos que usan este componente
+                    </h6>
+                    <div class="alert alert-info mb-0">
+                        <i class="bi bi-info-circle"></i>
+                        Este componente está instalado en <strong>@Model.RelacionDispositivoComponentes.Count</strong> equipo(s)
+                    </div>
+                </div>
+            </div>
+        </div>
+    } *@
+</div>
+
+<div class="modal-footer border-0 pt-4">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+        <i class="bi bi-x-circle"></i> Cerrar
+    </button>
+    <button type="button" class="btn btn-success-custom" onclick="$('#modalComponente').modal('hide'); abrirModalEditarComponente(@Model.TipoMovimiento);">
+        <i class="bi bi-pencil"></i> Editar
+    </button>
+</div>

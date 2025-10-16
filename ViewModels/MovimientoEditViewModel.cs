@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
 
 namespace inventario_coprotab.ViewModels
 {
@@ -23,6 +24,13 @@ namespace inventario_coprotab.ViewModels
         public string? Observaciones { get; set; }
 
         public DateTime Fecha { get; set; }
+
+        public List<SelectListItem> Dispositivo { get; set; } = new();
+        //public List<SelectListItem> TiposHardware { get; set; } = new();
+        public List<ComponenteCheckboxItem> Responsable { get; set; } = new();
+
+        public List<ComponenteCheckboxItem> Ubicacion { get; set; } = new();
+
 
     }
 }

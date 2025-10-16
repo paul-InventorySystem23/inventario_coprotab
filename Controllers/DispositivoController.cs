@@ -88,15 +88,37 @@ namespace inventario_coprotab.Controllers
 
             var componentes = await queryComponentes.ToListAsync();
 
+            var queryMovimientos = _context.Movimientos
+                .Include(c => c.IdDispositivoNavigation)
+                .Include(c => c.IdUbicacionNavigation)
+                .Include(c => c.IdResponsableNavigation);
+
+
+            // Aplicar filtros similares para Movimientos
+            //if (!string.IsNullOrEmpty(searchNDispositivo))
+            //    queryMovimientos = queryMovimientos.Where(c => c.IdDispositivoNavigation != null && c.IdDispositivoNavigation.Nombre.Contains(searchNDispositivo));
+
+            //if (!string.IsNullOrEmpty(searchTipo))
+            //    queryComponentes = queryComponentes.Where(c => c.IdTipoNavigation != null && c.IdTipoNavigation.Descripcion.Contains(searchTipo));
+
+            //if (!string.IsNullOrEmpty(searchEstado))
+            //    queryComponentes = queryComponentes.Where(c => c.Estado == searchEstado);
+
+            var movimientos = await queryMovimientos.ToListAsync();
+
             // Pasar ambas listas a la vista
+            ViewBag.Movimientos = movimientos;
             ViewBag.Componentes = componentes;
             ViewBag.SearchCode = searchCode;
             ViewBag.SearchSerie = searchSerie;
             ViewBag.SearchTipo = searchTipo;
             ViewBag.SearchEstado = searchEstado;
 
+
             return View(dispositivos);
         }
+
+
         // GET: Dispositivo/Details/5
         public async Task<IActionResult> Details(int? id)
         {

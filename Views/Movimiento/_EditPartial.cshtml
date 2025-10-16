@@ -1,7 +1,10 @@
-﻿@model inventario_coprotab.ViewModels.MovimientoViewModel
+﻿@model inventario_coprotab.ViewModels.MovimientoEditViewModel
 
-<form asp-action="CreateModal" asp-controller="Movimiento" method="post" id="formMovimiento">
+
+
+<form method="post" id="formMovimientoEdit">
     @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="IdMovimiento" />
     <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
     <div class="row">
@@ -58,7 +61,7 @@
 
         <div class="col-md-6 mb-3">
             <label asp-for="Fecha" class="form-label fw-bold">
-                <i class="bi bi-calendar"></i> Fecha 
+                <i class="bi bi-calendar"></i> Fecha
             </label>
             <input asp-for="Fecha" class="form-control" type="date" />
             <span asp-validation-for="Fecha" class="text-danger small"></span>
@@ -72,95 +75,29 @@
         <textarea asp-for="Observaciones" class="form-control" rows="3" placeholder="Descripción detallada del componente..."></textarea>
         <span asp-validation-for="Observaciones" class="text-danger small"></span>
     </div>
-
-    @* <div class="row">
-        <div class="form-group">
-            <label asp-for="IdDispositivo" class="control-label"></label>
-            <select asp-for="IdDispositivo" class="form-control"
-                    asp-items="@(ViewData["IdDispositivo"] as SelectList)">
-                <option value="">-- Seleccione un dispositivo --</option>
-            </select>
-            <span asp-validation-for="IdDispositivo" class="text-danger"></span>
-        </div>
-
     
-        <div class="mb-3">
-            <label asp-for="TipoMovimiento" class="form-label fw-bold">Estado</label>
-            <select asp-for="TipoMovimiento" class="form-select">
-                <option value="Entrada">Entrada</option>
-                <option value="Salida">Salida</option>
-                <option value="Traslado">Traslado</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-        <label asp-for="IdResponsable" class="control-label"></label>
-        <select asp-for="IdResponsable" class="form-control"
-                asp-items="@(ViewData["IdResponsable"] as SelectList)">
-            <option value="">-- Seleccione un responsable --</option>
-        </select>
-        <span asp-validation-for="IdResponsable" class="text-danger"></span>
-        </div>
+    <div class="modal-footer border-0 pt-4">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="bi bi-x-circle"></i> Cancelar
+        </button>
+        <button type="submit" class="btn btn-success-custom">
+            <i class="bi bi-save"></i> Guardar Cambios
+        </button>
     </div>
-
-    <div class="form-group">
-        <label asp-for="IdUbicacion" class="control-label"></label>
-        <select asp-for="IdUbicacion" class="form-control"
-                asp-items="@(ViewData["IdUbicacion"] as SelectList)">
-            <option value="">-- Seleccione una ubicación --</option>
-        </select>
-        <span asp-validation-for="IdUbicacion" class="text-danger"></span>
-    
-
-        <div class="col-md-6 mb-3">
-            <label asp-for="Cantidad" class="form-label fw-bold">
-                <i class="bi bi-box-seam"></i> Cantidad
-            </label>
-            <input asp-for="Cantidad" class="form-control" type="number" min="1" value="1" />
-            <span asp-validation-for="Cantidad" class="text-danger small"></span>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-6 mb-3">
-             <label asp-for="Observaciones" class="form-label fw-bold">
-                    <i class="bi bi-tag"></i> Observaciones
-             </label>
-             <input asp-for="Observaciones" class="form-control" placeholder="Ej: Cambio de Computadora" />
-             <span asp-validation-for="Observaciones" class="text-danger small"></span>
-        </div>
-
-        <div class="col-md-6 mb-3">
-            <label asp-for="Fecha" class="form-label fw-bold">
-                    <i class="bi bi-calendar"></i> Fecha del Movimiento
-            </label>
-            <input asp-for="Fecha" class="form-control" type="date" />
-            <span asp-validation-for="Fecha" class="text-danger small"></span>
-        </div>
-    </div> *@
-
-    
-
-        <div class="modal-footer border-0 pt-4">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                <i class="bi bi-x-circle"></i> Cancelar
-            </button>
-            <button type="submit" class="btn btn-success-custom">
-                <i class="bi bi-save"></i> Guardar Movimiento
-            </button>
-        </div>
-
 </form>
+
+    
+
 
 <script>
     $(function () {
-        var form = $('#formMovimiento');
+        var form = $('#formMovimientoEdit');
         if (form.length) {
             $.validator.unobtrusive.parse(form);
         }
     });
 
-    $(document).on('submit', '#formMovimiento', function(e) {
+    $(document).on('submit', '#formMovimientoEdit', function(e) {
         e.preventDefault();
         var form = $(this);
         $.ajax({
