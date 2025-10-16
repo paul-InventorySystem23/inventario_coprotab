@@ -4,10 +4,6 @@
 @{
     ViewData["Title"] = "Gestión de Dispositivos y Componentes";
     var componentes = ViewBag.Componentes as IEnumerable<inventario_coprotab.Models.DBInventario.Componente>;
-}
-
-@{
-    ViewData["Title"] = "Gestión de Dispositivos y Componentes";
     var movimientos = ViewBag.Movimientos as IEnumerable<inventario_coprotab.Models.DBInventario.Movimiento>;
 }
 
@@ -23,10 +19,6 @@
         <button class="btn btn-success-custom" onclick="abrirModalCrearComponente()">
             <i class="bi bi-gear"></i> Nuevo Componente
         </button>
-        <button class="btn btn-success-custom" onclick="abrirModalMovimiento()">
-            <i class="bi bi-gear"></i> Nuevo Movimiento
-        </button>
-
     </div>
 </div>
 
@@ -87,7 +79,7 @@
                     <th><i class="bi bi-circle-fill"></i> Estado</th>
                     <th><i class="bi bi-calendar"></i> Fecha Alta</th>
                     <th><i class="bi bi-boxes"></i> Stock</th>
-                    <th><i class="bi bi-bookmark"></i> Marca</th> 
+                    <th><i class="bi bi-bookmark"></i> Marca</th>
                     <th><i class="bi bi-cpu"></i> Tipo</th>
                     <th class="text-center"><i class="bi bi-gear"></i> Acciones</th>
                 </tr>
@@ -126,7 +118,7 @@
                                 @item.StockActual unidades
                             </span>
                         </td>
-                       <td>@(item.IdMarcaNavigation?.Nombre ?? "Sin marca")</td>
+                        <td>@(item.IdMarcaNavigation?.Nombre ?? "Sin marca")</td>
                         <td>@(item.IdTipoNavigation?.Descripcion ?? "Sin tipo")</td>
                         <td class="text-center">
                             <div class="btn-group" role="group">
@@ -135,6 +127,9 @@
                                 </button>
                                 <button class="btn btn-sm btn-warning-custom" onclick="abrirModalEditar(@item.IdDispositivo)" title="Editar">
                                     <i class="bi bi-pencil"></i>
+                                </button>
+                                <button class="btn btn-sm btn-info" onclick="abrirModalMovimientoDispositivo(@item.IdDispositivo)" title="Crear Movimiento">
+                                    <i class="bi bi-arrow-left-right"></i>
                                 </button>
                                 <button class="btn btn-sm btn-danger-custom" onclick="abrirModalEliminar(@item.IdDispositivo, '@item.Nombre')" title="Eliminar">
                                     <i class="bi bi-trash"></i>
@@ -173,7 +168,7 @@
                     <th><i class="bi bi-hash"></i> Nro. Serie</th>
                     <th><i class="bi bi-circle-fill"></i> Estado</th>
                     <th><i class="bi bi-bookmark"></i> Marca</th>
-                    <th><i class="bi bi-cpu"></i> Tipo</th> 
+                    <th><i class="bi bi-cpu"></i> Tipo</th>
                     <th><i class="bi bi-calendar"></i> Fecha Instalación</th>
                     <th><i class="bi bi-box-seam"></i> Cantidad</th>
                     <th class="text-center"><i class="bi bi-gear"></i> Acciones</th>
@@ -218,7 +213,7 @@
                                 }
                             </td>
                             <td>@(comp.IdMarcaNavigation?.Nombre ?? "Sin marca")</td>
-                            <td>@(comp.IdTipoNavigation?.Descripcion ?? "Sin tipo")</td> 
+                            <td>@(comp.IdTipoNavigation?.Descripcion ?? "Sin tipo")</td>
                             <td>@(comp.FechaInstalacion?.ToString("dd/MM/yyyy") ?? "N/A")</td>
                             <td>
                                 <span class="badge bg-info">@comp.Cantidad</span>
@@ -251,11 +246,11 @@
     }
 </div>
 
-@* //Seccion de Movimientos *@
+<!-- Sección de Movimientos -->
 <div class="card-custom p-4 mb-4" style="border-left: 4px solid var(--success-color);">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h3 class="mb-0" style="color: var(--success-color);">
-            <i class="bi bi-gear-fill"></i> Movimientos
+            <i class="bi bi-arrow-left-right"></i> Movimientos
         </h3>
         <span class="badge bg-success" style="font-size: 1rem;">@(movimientos?.Count() ?? 0) registros</span>
     </div>
@@ -264,7 +259,7 @@
         <table class="table table-custom table-hover">
             <thead style="background: var(--success-color);">
                 <tr>
-                    <th><i class="bi bi-tag"></i> Nombre de Dipositivo</th>
+                    <th><i class="bi bi-tag"></i> Nombre de Dispositivo</th>
                     <th><i class="bi bi-card-text"></i> Tipo de Movimiento</th>
                     <th><i class="bi bi-hash"></i> Cantidad</th>
                     <th><i class="bi bi-circle-fill"></i> Ubicacion</th>
@@ -301,12 +296,11 @@
                                     </span>
                                 }
                             </td>
-                            @* <td>@(movi.TipoMovimiento)</td> *@
                             <td>@(movi.Cantidad)</td>
                             <td>@(movi.IdUbicacionNavigation?.Nombre)</td>
                             <td>@(movi.IdResponsableNavigation?.Nombre)</td>
                             <td>@(movi.Observaciones)</td>
-                            <td>@(movi.Fecha.ToString("dd/MM/yyyy") ?? "N/A")</td>
+                            <td>@(movi.Fecha.ToString("dd/MM/yyyy HH:mm") ?? "N/A")</td>
                             <td class="text-center">
                                 <div class="btn-group" role="group">
                                     <button class="btn btn-sm btn-outline-primary" onclick="abrirModalDetalleMovimiento(@movi.IdMovimiento)" title="Ver Detalles">
@@ -318,9 +312,6 @@
                                     <button class="btn btn-sm btn-danger-custom" onclick="abrirModalEliminarMovimiento(@movi.IdMovimiento, '@movi.IdDispositivoNavigation.Nombre')" title="Eliminar">
                                         <i class="bi bi-trash"></i>
                                     </button>
-                                    @* <button class="btn btn-success-custom" onclick="abrirModalMovimiento()">
-                                        <i class="bi bi-gear"></i> Nuevo Movimiento
-                                    </button> *@
                                 </div>
                             </td>
                         </tr>
@@ -333,11 +324,12 @@
     @if (movimientos == null || !movimientos.Any())
     {
         <div class="alert alert-info text-center">
-            <i class="bi bi-info-circle"></i> No se encontraron componentes con los criterios de búsqueda especificados.
+            <i class="bi bi-info-circle"></i> No se encontraron movimientos registrados.
         </div>
     }
 </div>
 
+<!-- Modales existentes... -->
 <!-- Modal Crear/Editar Dispositivos -->
 <div class="modal fade" id="modalFormulario" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -418,6 +410,7 @@
     </div>
 </div>
 
+<!-- Modal Movimiento -->
 <div class="modal fade" id="modalMovimiento" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -643,11 +636,10 @@
             });
         });
 
-        //Movimientos
-
-        function abrirModalMovimiento() {
-            $('#modalMovimientoTitulo').html('<i class="bi bi-plus-circle"></i> Nuevo Movimiento');
-            $.get('@Url.Action("Create", "Movimiento")', function(data) {
+        // ==================== FUNCIONES MOVIMIENTOS ====================
+        function abrirModalMovimientoDispositivo(idDispositivo) {
+            $('#modalMovimientoTitulo').html('<i class="bi bi-arrow-left-right"></i> Nuevo Movimiento');
+            $.get('@Url.Action("CreateForDispositivo", "Movimiento")/' + idDispositivo, function(data) {
                 $('#modalMovimientoContenido').html(data);
                 $('#modalMovimiento').modal('show');
             }).fail(function() {
