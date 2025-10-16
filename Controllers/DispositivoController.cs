@@ -68,7 +68,11 @@ namespace inventario_coprotab.Controllers
             if (!string.IsNullOrEmpty(searchEstado))
                 queryDispositivos = queryDispositivos.Where(d => d.Estado == searchEstado);
 
-            var dispositivos = await queryDispositivos.ToListAsync();
+            // ✅ Ordenar por fecha de alta descendente (más recientes primero) y tomar solo 5
+            var dispositivos = await queryDispositivos
+                .OrderByDescending(d => d.FechaAlta)
+                .Take(5)
+                .ToListAsync();
 
             // COMPONENTES
             var queryComponentes = _context.Componentes
@@ -86,25 +90,22 @@ namespace inventario_coprotab.Controllers
             if (!string.IsNullOrEmpty(searchEstado))
                 queryComponentes = queryComponentes.Where(c => c.Estado == searchEstado);
 
-            var componentes = await queryComponentes.ToListAsync();
+            // ✅ Ordenar por fecha de instalación descendente y tomar solo 5
+            var componentes = await queryComponentes
+                .OrderByDescending(c => c.FechaInstalacion)
+                .Take(5)
+                .ToListAsync();
 
             var queryMovimientos = _context.Movimientos
                 .Include(c => c.IdDispositivoNavigation)
                 .Include(c => c.IdUbicacionNavigation)
                 .Include(c => c.IdResponsableNavigation);
 
-
-            // Aplicar filtros similares para Movimientos
-            //if (!string.IsNullOrEmpty(searchNDispositivo))
-            //    queryMovimientos = queryMovimientos.Where(c => c.IdDispositivoNavigation != null && c.IdDispositivoNavigation.Nombre.Contains(searchNDispositivo));
-
-            //if (!string.IsNullOrEmpty(searchTipo))
-            //    queryComponentes = queryComponentes.Where(c => c.IdTipoNavigation != null && c.IdTipoNavigation.Descripcion.Contains(searchTipo));
-
-            //if (!string.IsNullOrEmpty(searchEstado))
-            //    queryComponentes = queryComponentes.Where(c => c.Estado == searchEstado);
-
-            var movimientos = await queryMovimientos.ToListAsync();
+            // ✅ Ordenar por fecha descendente y tomar solo 5
+            var movimientos = await queryMovimientos
+                .OrderByDescending(m => m.Fecha)
+                .Take(5)
+                .ToListAsync();
 
             // Pasar ambas listas a la vista
             ViewBag.Movimientos = movimientos;

@@ -1,0 +1,128 @@
+﻿@model inventario_coprotab.ViewModels.MovimientoComponenteViewModel
+
+<form asp-action="CreateComponenteModal" asp-controller="Movimiento" method="post" id="formMovimientoComponente">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+    <input type="hidden" asp-for="IdComponente" />
+
+    <div class="row">
+        <div class="col-md-12 mb-3">
+            <label class="form-label fw-bold">
+                <i class="bi bi-gear"></i> Componente Seleccionado
+            </label>
+            <div class="alert alert-info mb-0 py-2 d-flex align-items-center justify-content-between">
+                <div>
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    <strong>@ViewBag.ComponenteNombre</strong>
+                </div>
+                <div>
+                    <span class="badge bg-primary">Stock actual: @ViewBag.StockActual</span>
+                </div>
+            </div>
+            <small class="text-muted">El componente ha sido preseleccionado automáticamente</small>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label asp-for="TipoMovimiento" class="form-label fw-bold">
+                <i class="bi bi-arrow-left-right"></i> Tipo de Movimiento
+            </label>
+            <select asp-for="TipoMovimiento" class="form-select" asp-items="@(new SelectList(ViewBag.TipoDisponibles))">
+                <option value="">-- Seleccionar Tipo --</option>
+            </select>
+            <span asp-validation-for="TipoMovimiento" class="text-danger small"></span>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label asp-for="Cantidad" class="form-label fw-bold">
+                <i class="bi bi-box-seam"></i> Cantidad
+            </label>
+            <input asp-for="Cantidad" class="form-control" type="number" min="1" value="1" />
+            <span asp-validation-for="Cantidad" class="text-danger small"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label asp-for="IdUbicacion" class="form-label fw-bold">
+                <i class="bi bi-geo-alt"></i> Ubicación
+            </label>
+            <select asp-for="IdUbicacion" class="form-select" asp-items="ViewBag.IdUbicacion">
+                <option value="">-- Seleccionar Ubicación --</option>
+            </select>
+            <span asp-validation-for="IdUbicacion" class="text-danger small"></span>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label asp-for="IdResponsable" class="form-label fw-bold">
+                <i class="bi bi-person-badge"></i> Responsable
+            </label>
+            <select asp-for="IdResponsable" class="form-select" asp-items="ViewBag.IdResponsable">
+                <option value="">-- Seleccionar Responsable --</option>
+            </select>
+            <span asp-validation-for="IdResponsable" class="text-danger small"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 mb-3">
+            <label class="form-label fw-bold">
+                <i class="bi bi-calendar-check"></i> Fecha y Hora del Movimiento
+            </label>
+            <div class="alert alert-success mb-0 py-2 d-flex align-items-center">
+                <i class="bi bi-clock-fill me-2"></i>
+                <span>Se registrará automáticamente: <strong>@DateTime.Now.ToString("dd/MM/yyyy HH:mm")</strong></span>
+            </div>
+            <small class="text-muted">La fecha y hora se registrarán automáticamente al momento de guardar</small>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Observaciones" class="form-label fw-bold">
+            <i class="bi bi-card-text"></i> Observaciones
+        </label>
+        <textarea asp-for="Observaciones" class="form-control" rows="3" placeholder="Detalles adicionales del movimiento..."></textarea>
+        <span asp-validation-for="Observaciones" class="text-danger small"></span>
+    </div>
+
+    <div class="modal-footer border-0 pt-4">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="bi bi-x-circle"></i> Cancelar
+        </button>
+        <button type="submit" class="btn btn-success-custom">
+            <i class="bi bi-save"></i> Registrar Movimiento
+        </button>
+    </div>
+</form>
+
+<script>
+    $(function () {
+        var form = $('#formMovimientoComponente');
+        if (form.length) {
+            $.validator.unobtrusive.parse(form);
+        }
+    });
+
+    $(document).on('submit', '#formMovimientoComponente', function(e) {
+        e.preventDefault();
+        var form = $(this);
+        $.ajax({
+            url: form.attr('action'),
+            type: 'POST',
+            data: form.serialize(),
+            success: function(response) {
+                if (response.success) {
+                    $('#modalMovimiento').modal('hide');
+                    location.reload();
+                } else {
+                    $('#modalMovimientoContenido').html(response);
+                }
+            },
+            error: function() {
+                alert('Error al procesar la solicitud');
+            }
+        });
+    });
+</script>
